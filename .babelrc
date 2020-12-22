@@ -1,6 +1,6 @@
 {
   "presets": ["@babel/preset-env"],
-  "minified": false ,
+  "minified": false , //壓縮JS，預設為false
   "plugins": [
     [
       "@babel/plugin-transform-runtime",
