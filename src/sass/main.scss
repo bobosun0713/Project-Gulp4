@@ -1,5 +1,14 @@
-@import "page/index";
+// Modules (元件) =========================
+@import "modules/media";
+@import "modules/modules";
 
-li{
-    color:red;
-}
+// Basic  (基本設定) =======================
+@import "base/reset"; // 各瀏覽器樣式重置
+@import "base/all"; // 共用屬性
+
+// Layout (排版）==========================
+@import "layout/header";
+@import "layout/footer";
+
+// Page   (分頁) ==========================
+@import "page/index";
