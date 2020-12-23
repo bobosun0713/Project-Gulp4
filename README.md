@@ -16,7 +16,24 @@
 
 2. npm run GulpP (生產版本 : 圖片及 JS 會進行壓縮轉譯)
 
-> **如果JS文件要轉譯ES6底層API，壓縮需再**
+> 如果JS文件要轉譯ES6底層API，需再.babelrc 裡修改corejs 參數，改3能徹底轉譯ES6底層API的程式碼。使用建議 **:** 如需支援IE等瀏覽器，又需以ES6 方式寫如( Promise 、 forEach 等函式 ) 才使用，但編譯出來的JS檔案會比原本大很多。
+
+```
+{
+  "presets": [
+    "@babel/preset-env"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": 3
+      }
+    ]
+  ],
+  "minified": true
+}
+```
 
 ## 資料結構 - src
 
