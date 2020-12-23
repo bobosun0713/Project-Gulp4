@@ -4,7 +4,7 @@
 
 1. 需先安裝Node.js - ( NVM-版本管理 ) 
 
-2. node版本 - xxxxxx 測試能正常使用 package.json 裡的套件
+2. node版本 - 10.19.0 測試能正常使用 package.json 裡的套件
 
 3. 安裝完，在終端機輸入指令 **:** npm install gulp-cli -g    (  -g  的意思是在全域環境下安裝)
 
