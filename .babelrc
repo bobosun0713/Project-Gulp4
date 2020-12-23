@@ -1,12 +1,14 @@
 {
-  "presets": ["@babel/preset-env"],
-  "minified": false , //壓縮JS，預設為false
+  "presets": [
+    "@babel/preset-env"
+  ],
   "plugins": [
     [
       "@babel/plugin-transform-runtime",
       {
-        "corejs": 3
+        "corejs": false
       }
     ]
-  ]
+  ],
+  "minified": true //壓縮JS，預設為false
 }

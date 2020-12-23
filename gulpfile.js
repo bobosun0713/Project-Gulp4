@@ -11,6 +11,32 @@ const include = require("gulp-file-include");
 
 // JS轉譯
 const babel = require("gulp-babel");
+const browserify = require('browserify')
+const buffer = require('vinyl-buffer')
+const stream = require('vinyl-source-stream')
+
+// 多個JS文件 打包模組
+const es = require('event-stream')
+const fs = require('fs')
+const join = require('path').join
+function findSync(startPath) {
+  let result = []
+  function finder(path) {
+    let files = fs.readdirSync(path)
+    files.forEach(val => {
+      let fPath = join(path, val)
+      let stats = fs.statSync(fPath)
+      if (stats.isDirectory()) finder(fPath)
+      if (stats.isFile()) result.push({ path: './' + fPath, name: val })
+    })
+  }
+  finder(startPath)
+  let res = result.map(item => {
+    item.path = item.path.replace(/\\/g, '/')
+    return item
+  })
+  return res
+}
 
 // CSS / Sass
 const cleanCss = require("gulp-clean-css"); //未用到
@@ -89,12 +115,36 @@ function scss() {
   );
 }
 
-// 編譯JS ES6轉ES5
+/* 編譯JS ES6轉ES5 / require轉譯 **********************************/
 function js() {
   return src(web.js) // javascript 檔案路徑
     .pipe($if(env === "pro", babel()))
     .pipe(dest("./public/js/")); // 編譯完成輸出路徑
 }
+
+// 多個JS文件入口腳本編譯
+function reqjs(cb) {
+  let files = findSync('./public/js/')
+  let task = files.map(entry => {
+    return browserify({
+      entries: entry.path,
+      debug: true
+    })
+      .bundle()
+      .on('error', function (error) {
+        console.log(error.toString())
+      })
+      .pipe(stream(entry.name))
+      .pipe(buffer())
+      .pipe(dest('./public/js/'))
+  })
+  es.merge.apply(null, task)
+  cb();
+}
+
+
+
+/* ***************************************************************/
 
 // 壓縮照片
 function img() {
@@ -148,8 +198,9 @@ function browser() {
   watch(web.html, html).on("change", reload);
   watch(web.css, Kitcss).on("change", reload);
   watch(web.sass, scss).on("change", reload);
-  watch(web.js, js).on("change", reload);
+  $if(env === 'dev', watch(web.js, js).on("change", reload));
+  $if(env === 'pro', watch(web.js, series(js, reqjs)).on("change", reload));
   watch(web.img, img).on("change", reload);
 }
 
-exports.default = series(delContent, html, scss, Kitcss, js, img, browser);
+exports.default = series(delContent, html, scss, Kitcss, js, reqjs, img, browser);
